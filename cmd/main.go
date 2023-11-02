@@ -7,9 +7,9 @@ import (
 
 	"breks/pkg/eks"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/sts"
+	// "github.com/aws/aws-sdk-go/aws"
+	// "github.com/aws/aws-sdk-go/aws/session"
+	// "github.com/aws/aws-sdk-go/service/sts"
 )
 
 func main() {
@@ -28,36 +28,42 @@ func main() {
 
 
 	// Create a new session in the us-west-1 region.
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(region)},
-	)
-	if err != nil {
-		log.Fatalf("ERROR: failed to create session, %v", err)
-	}
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	// sess, err := session.NewSession(&aws.Config{
+	// 	Region: aws.String(region)},
+	// )
+	// if err != nil {
+	// 	log.Fatalf("ERROR: failed to create session, %v", err)
+	// }
 
-	// Create a STS client from just a session.
-	svc := sts.New(sess)
+	// // Create a STS client from just a session.
+	// svc := sts.New(sess)
 
-	// Assume an IAM role. Replace with the ARN of the role you want to assume.
-	roleToAssumeArn := os.Getenv("AWS_ROLE")
-	sessionName 	:= "MySsession1"
+	// // Assume an IAM role. Replace with the ARN of the role you want to assume.
+	// roleToAssumeArn := os.Getenv("AWS_ROLE")
+	// sessionName 	:= "MySsession1"
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	// Call the AssumeRole API
-	resp, err := svc.AssumeRole(&sts.AssumeRoleInput{
-		RoleArn:         &roleToAssumeArn,
-		RoleSessionName: &sessionName,
-	})
-	if err != nil {
-		log.Fatalf("unable to assume role, %v", err)
-	}
+	// // Call the AssumeRole API
+	// resp, err := svc.AssumeRole(&sts.AssumeRoleInput{
+	// 	RoleArn:         &roleToAssumeArn,
+	// 	RoleSessionName: &sessionName,
+	// })
+	// if err != nil {
+	// 	log.Fatalf("unable to assume role, %v", err)
+	// }
 
-	// Now you have temporary credentials to use in the form of resp.Credentials
-	fmt.Println("Access Key ID:     ", *resp.Credentials.AccessKeyId)
-	fmt.Println("Secret Access Key: ", *resp.Credentials.SecretAccessKey)
-	fmt.Println("Session Token:     ", *resp.Credentials.SessionToken)
+	// // Now you have temporary credentials to use in the form of resp.Credentials
+	// fmt.Println("Access Key ID:     ", *resp.Credentials.AccessKeyId)
+	// fmt.Println("Secret Access Key: ", *resp.Credentials.SecretAccessKey)
+	// fmt.Println("Session Token:     ", *resp.Credentials.SessionToken)
 
 	// Create a new EKS client
-	eksClient, err := eks.NewEKSClient(accessKeyID, secretAccessKey, sessionToken, region) //sessionToken
+	eksClient, err := eks.NewEKSClient(
+							accessKeyID, // *resp.Credentials.AccessKeyId, //
+							secretAccessKey, //*resp.Credentials.SecretAccessKey, //
+							sessionToken,		// *resp.Credentials.SessionToken, //
+							region) //sessionToken
 	if err != nil {
 		log.Fatalf("Failed to create EKS client: %v", err)
 	}
